@@ -55,6 +55,10 @@ def users():
 		cursor.close() 
 		conn.close()
 
+@app.route('/gallery')
+def gallery_view():
+	return render_template('gallery.html')
+
 @app.route('/edit/<int:id>')
 def edit_view(id):
 	try:
