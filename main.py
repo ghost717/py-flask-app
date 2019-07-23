@@ -4,9 +4,10 @@ from db_config import mysql
 
 from flask import flash, render_template, request, redirect
 from werkzeug import generate_password_hash, check_password_hash
-import pymysql
 from hashlib import md5
+import pymysql
 import MySQLdb
+import os
 
 @app.route('/new_user')
 def add_user_view():
@@ -57,7 +58,32 @@ def users():
 
 @app.route('/gallery')
 def gallery_view():
-	return render_template('gallery.html')
+	path = './static/temp/'
+	
+	for root, dirs, files in os.walk(path):
+            for file in files:
+                print('[#] file ' + file)
+
+	# image_names = os.listdir('/static/temp/')
+    # print(image_names)
+    # return render_template('gallery.html', image_names=image_names)
+
+	return render_template('gallery.html', images=files)
+
+@app.route('/gall')
+def make_tree(path):
+    tree = dict(name=path, children=[])
+    try: lst = os.listdir(path)
+    except OSError:
+        pass #ignore errors
+    else:
+        for name in lst:
+            fn = os.path.join(path, name)
+            if os.path.isdir(fn):
+                tree['children'].append(make_tree(fn))
+            else:
+                tree['children'].append(dict(name=fn))
+    return tree
 
 @app.route('/edit/<int:id>')
 def edit_view(id):
