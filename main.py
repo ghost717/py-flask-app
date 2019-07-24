@@ -57,39 +57,6 @@ def users():
 		cursor.close() 
 		conn.close()
 
-@app.route('/gallery')
-def gallery_view():
-	# path = './static/temp/'
-	APP_ROOT = os.path.dirname(os.path.abspath(__file__))
-	path = os.path.join(APP_ROOT, 'static/temp/')
-	print(path)
-	for root, dirs, files in os.walk(path):
-            for file in files:
-                print('[#] file ' + file)
-
-	# image_names = os.listdir('/static/temp/')
-    # print(image_names)
-    # return render_template('gallery.html', image_names=image_names)
-
-	return render_template('gallery.html', images=files)
-
-# @app.route('/static/temp/<filename>')
-# def send_image(filename):
-#     # image = images.find({"_id":1})
-#     # head, tail = os.path.split(image['filename'])
-#     # print(head)
-#     # print(tail)
-#     # print(image["filename"])
-#     return send_from_directory('static/temp', filename)
-
-@app.route("/get-report/<path:path>")
-def get_report(path):
-
-    try:
-        return send_from_directory(app.config["TEST_PATH"], filename=path, as_attachment=False)
-    except FileNotFoundError:
-        abort(404)
-
 @app.route('/edit/<int:id>')
 def edit_view(id):
 	try:
@@ -150,6 +117,35 @@ def delete_user(id):
 	finally:
 		cursor.close() 
 		conn.close()
+
+@app.route('/gallery')
+def gallery_view():
+	APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+	path = os.path.join(APP_ROOT, 'static/temp/')
+	
+	print(path)
+	for root, dirs, files in os.walk(path):
+            for file in files:
+                print('[#] file ' + file)
+
+	return render_template('gallery.html', images=files)
+
+# @app.route('/static/temp/<filename>')
+# def send_image(filename):
+#     # image = images.find({"_id":1})
+#     # head, tail = os.path.split(image['filename'])
+#     # print(head)
+#     # print(tail)
+#     # print(image["filename"])
+#     return send_from_directory('static/temp', filename)
+
+@app.route("/get-image/<path:path>")
+def get_report(path):
+
+    try:
+        return send_from_directory(app.config["TEST_PATH"], filename=path, as_attachment=True)
+    except FileNotFoundError:
+        abort(404)
 		
 if __name__ == "__main__":
     app.run()
