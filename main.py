@@ -73,35 +73,22 @@ def gallery_view():
 
 	return render_template('gallery.html', images=files)
 
-@app.route('/static/temp/<filename>')
-def send_image(filename):
-    # image = images.find({"_id":1})
-    # head, tail = os.path.split(image['filename'])
-    # print(head)
-    # print(tail)
-    # print(image["filename"])
-    return send_from_directory('static/temp', filename)
+# @app.route('/static/temp/<filename>')
+# def send_image(filename):
+#     # image = images.find({"_id":1})
+#     # head, tail = os.path.split(image['filename'])
+#     # print(head)
+#     # print(tail)
+#     # print(image["filename"])
+#     return send_from_directory('static/temp', filename)
 
-# @app.route('/', defaults={'req_path': ''})
-# @app.route('/<path:req_path>')
-# def dir_listing(req_path):
-# 	APP_ROOT = os.path.dirname(os.path.abspath(__file__))
-# 	BASE_DIR = os.path.join(APP_ROOT, 'static/')
+@app.route("/get-report/<path:path>")
+def get_report(path):
 
-#     # Joining the base and the requested path
-#     abs_path = os.path.join(BASE_DIR, req_path)
-
-#     # Return 404 if path doesn't exist
-#     if not os.path.exists(abs_path):
-#         return abort(404)
-
-#     # Check if path is a file and serve
-#     if os.path.isfile(abs_path):
-#         return send_file(abs_path)
-
-#     # Show directory contents
-#     files = os.listdir(abs_path)
-#     return render_template('files.html', files=files)
+    try:
+        return send_from_directory(app.config["TEST_PATH"], filename=path, as_attachment=False)
+    except FileNotFoundError:
+        abort(404)
 
 @app.route('/edit/<int:id>')
 def edit_view(id):
