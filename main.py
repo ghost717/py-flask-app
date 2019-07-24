@@ -2,13 +2,14 @@ from app import app
 from tables import Results
 from db_config import mysql
 
-from flask import flash, render_template, request, redirect
+from flask import flash, render_template, request, redirect, send_from_directory
 from werkzeug import generate_password_hash, check_password_hash
 from hashlib import md5
 import pymysql
 import MySQLdb
 import os
 
+# APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 @app.route('/new_user')
 def add_user_view():
 	return render_template('add.html')
@@ -58,8 +59,10 @@ def users():
 
 @app.route('/gallery')
 def gallery_view():
-	path = './static/temp/'
-	
+	# path = './static/temp/'
+	APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+	path = os.path.join(APP_ROOT, 'static/temp/')
+	print(path)
 	for root, dirs, files in os.walk(path):
             for file in files:
                 print('[#] file ' + file)
@@ -70,20 +73,14 @@ def gallery_view():
 
 	return render_template('gallery.html', images=files)
 
-@app.route('/gall')
-def make_tree(path):
-    tree = dict(name=path, children=[])
-    try: lst = os.listdir(path)
-    except OSError:
-        pass #ignore errors
-    else:
-        for name in lst:
-            fn = os.path.join(path, name)
-            if os.path.isdir(fn):
-                tree['children'].append(make_tree(fn))
-            else:
-                tree['children'].append(dict(name=fn))
-    return tree
+@app.route('/static/temp/<filename>')
+def send_image(filename):
+    # image = images.find({"_id":1})
+    # head, tail = os.path.split(image['filename'])
+    # print(head)
+    # print(tail)
+    # print(image["filename"])
+    return send_from_directory('static/temp', filename)
 
 @app.route('/edit/<int:id>')
 def edit_view(id):
