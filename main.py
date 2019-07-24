@@ -138,6 +138,7 @@ def gallery_view():
 #     # print(tail)
 #     # print(image["filename"])
 #     return send_from_directory('static/temp', filename)
+### <img class="img-responsive" src=" {{url_for('send_image', filename=image)}}">
 
 @app.route("/get-image/<path:path>")
 def get_report(path):
