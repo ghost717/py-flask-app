@@ -1,5 +1,7 @@
 venv
+env
 images
 __pycache__
 static/temp
+temp
 .*
