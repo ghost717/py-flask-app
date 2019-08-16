@@ -13,6 +13,7 @@ from flask_jwt_extended import create_access_token
 
 from werkzeug.utils import secure_filename
 
+from flask_login import LoginManager, login_user, logout_user, login_required
 
 # configuration
 DEBUG = True
@@ -35,6 +36,7 @@ mysql = MySQL(app)
 CORS(app, resources={r'/*': {'origins': '*'}})
 
 # POSTS
+@login_required
 @app.route('/API/posts', methods=['GET', 'POST'])
 def all_posts():
     cur = mysql.connection.cursor()
