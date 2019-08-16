@@ -116,6 +116,19 @@ def single_post(post_id):
     return jsonify(response_object)
 
 # USERS
+@app.route('/API/users', methods=['GET', 'POST'])
+def all_users():
+    cur = mysql.connection.cursor()
+    response_object = {'status': 'success'}
+
+    cur.execute("SELECT * FROM users")
+    query = cur.fetchall()
+    response_object['users'] = query
+
+    cur.close()
+
+    return jsonify(response_object)
+
 @app.route('/API/users/register', methods=['POST'])
 def register():
     dt = datetime.datetime.now()
