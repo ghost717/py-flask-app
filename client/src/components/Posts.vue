@@ -166,7 +166,7 @@ export default {
         },
 
         getPosts() {
-            const path = 'http://localhost:5000/posts';
+            const path = 'http://localhost:5000/API/posts';
             axios.get(path)
                 .then((res) => {
                     this.posts = res.data.posts;
@@ -187,7 +187,7 @@ export default {
                 // console.log(file);
             }
 
-            axios.post( 'http://localhost:5000/posts', formData, {
+            axios.post( 'http://localhost:5000/API/posts', formData, {
                 headers: {
                     //'Content-Type': 'application/json'
                     'Content-Type': 'multipart/form-data'
@@ -249,7 +249,7 @@ export default {
             this.updatePost(payload, this.editForm.id);
         },
         updatePost(payload, postID){
-            const path = `http://localhost:5000/posts/${postID}`;
+            const path = `http://localhost:5000/API/posts/${postID}`;
             axios.put(path, payload)
             .then(() => {
                 this.getPosts();
@@ -268,7 +268,7 @@ export default {
             this.getPosts();
         },
         removePost(postID){
-            const path = `http://localhost:5000/posts/${postID}`;
+            const path = `http://localhost:5000/API/posts/${postID}`;
             axios.delete(path)
             .then(() => {
                 this.getPosts();

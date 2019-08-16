@@ -1,3 +1,7 @@
+import uuid
+import os
+import datetime
+
 from flask import Flask, jsonify, request, json, render_template
 from flask_cors import CORS
 
@@ -10,6 +14,7 @@ DEBUG = True
 # instantiate the app
 app = Flask(__name__)
 app.config.from_object(__name__)
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
@@ -34,14 +39,14 @@ def all_posts():
     today = dt.strftime("%Y-%m-%d %H:%M:%S")
 
     #upload path
-    target = os.path.join(APP_ROOT, 'images/upload/')
+    target = os.path.join(APP_ROOT, 'images/')
     if not os.path.isdir(target):
         os.mkdir(target)
     else:
         print("couldn't create upload dir: {}".format(target) )
     
     if request.method == 'POST':
-        target = os.path.join(APP_ROOT, 'images/upload/')
+        target = os.path.join(APP_ROOT, 'images/')
         data = json.loads(request.form['postData'])
 
         if data['date'] == '':
@@ -83,6 +88,24 @@ def all_posts():
 
 
     cur.close()
+
+    return jsonify(response_object)
+
+@app.route('/API/posts/<post_id>', methods=['PUT', 'DELETE'])
+def single_post(post_id):
+    cur = mysql.connection.cursor()
+    response_object = {'status': 'success'}
+
+    if request.method == 'PUT':
+        post_data = request.get_json()
+        cur.execute("UPDATE `posts` SET `id`='" + post_id + "',`title`='" + post_data['title'] + "', `post_content`='" + post_data['post_content'] + "', `author`='" + post_data['author'] + "', `date`='" + post_data['date'] + "' WHERE `id`='" + post_id + "'")
+        mysql.connection.commit()
+        response_object['message'] = 'Post updated!'
+
+    if request.method == 'DELETE':
+        cur.execute("DELETE FROM `posts` WHERE `id`='" + post_id + "'")
+        mysql.connection.commit()
+        response_object['message'] = 'Post removed!'
 
     return jsonify(response_object)
 
