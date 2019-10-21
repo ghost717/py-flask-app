@@ -13,6 +13,7 @@ from flask_jwt_extended import create_access_token
 
 from werkzeug.utils import secure_filename
 
+from flask_login import LoginManager, login_user, logout_user, login_required
 
 # configuration
 DEBUG = True
@@ -25,6 +26,7 @@ APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'flask_api2'
+app.config['MYSQL_HOST'] = '127.0.0.1'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 app.config['JWT_SECRET_KEY'] = 'secret'
 
@@ -35,6 +37,7 @@ mysql = MySQL(app)
 CORS(app, resources={r'/*': {'origins': '*'}})
 
 # POSTS
+@login_required
 @app.route('/API/posts', methods=['GET', 'POST'])
 def all_posts():
     cur = mysql.connection.cursor()
@@ -112,6 +115,78 @@ def single_post(post_id):
         cur.execute("DELETE FROM `posts` WHERE `id`='" + post_id + "'")
         mysql.connection.commit()
         response_object['message'] = 'Post removed!'
+
+    return jsonify(response_object)
+
+# TASKS
+@app.route('/API/tasks', methods=['GET', 'POST'])
+def all_tasks():
+    cur = mysql.connection.cursor()
+    response_object = {'status': 'success'}
+
+    #date
+    dt = datetime.datetime.now()
+    today = dt.strftime("%Y-%m-%d %H:%M:%S")
+    
+    if request.method == 'POST':
+        data = request.get_json()
+        print('[#] dodaje: ', data)
+
+        if data['date'] == '':
+            data['date'] = today
+        
+        if data['created'] == '':
+            data['created'] = today
+
+        data['author'] = 1
+
+        cur.execute("INSERT INTO tasks (`title`, `content`, `author`, `status`, `date`, `created`) VALUES ('" + str(data['title']) + "', '" + str(data['content']) + "', '" + str(data['author']) + "', '" + str(data['status']) + "', '" + str(data['date']) + "', '" + str(data['created']) + "')")
+        mysql.connection.commit()
+        postID = cur.lastrowid
+        # print('[#] postID: ', postID)
+        response_object['message'] = 'Task added!'
+        
+        print('Task added!')
+    else: 
+        cur.execute("SELECT * FROM tasks")
+        query = cur.fetchall()
+        response_object['tasks'] = query
+        print(query)
+
+    cur.close()
+
+    return jsonify(response_object)
+
+@app.route('/API/tasks/<task_id>', methods=['PUT', 'DELETE'])
+def single_task(task_id):
+    cur = mysql.connection.cursor()
+    response_object = {'status': 'success'}
+
+    if request.method == 'PUT':
+        data = request.get_json()
+
+        if data['title'] != '':
+            cur.execute("UPDATE tasks SET title='" + data['title'] + "' WHERE id='" + task_id + "'")
+
+        if data['content'] != '':
+            cur.execute("UPDATE tasks SET content='" + data['content'] + "' WHERE id='" + task_id + "'")
+        
+        if data['status'] != '':
+            cur.execute("UPDATE tasks SET status='" + data['status'] + "' WHERE id='" + task_id + "'")
+
+        if data['author'] != '':
+            cur.execute("UPDATE tasks SET author='" + data['author'] + "' WHERE id='" + task_id + "'")
+
+        if data['date'] != '':
+            cur.execute("UPDATE tasks SET date='" + data['date'] + "' WHERE id='" + task_id + "'")
+
+        mysql.connection.commit()  
+        response_object['message'] = 'Task updated!'
+
+    if request.method == 'DELETE':
+        cur.execute("DELETE FROM tasks WHERE id='" + task_id + "'")
+        mysql.connection.commit()
+        response_object['message'] = 'Task removed!'
 
     return jsonify(response_object)
 

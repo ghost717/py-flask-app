@@ -20,9 +20,6 @@
                 <li class="nav-item">
                     <router-link class="nav-link" to="/tasks">Tasks</router-link>
                 </li>
-                <li class="nav-item">
-                    <router-link class="nav-link" to="/trenings">Trenings</router-link>
-                </li>
                 <li v-if="auth==''" class="nav-item">
                     <router-link class="nav-link" to="/login">Login</router-link>
                 </li>

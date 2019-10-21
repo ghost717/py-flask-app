@@ -171,6 +171,7 @@ export default {
                 .then((res) => {
                     this.posts = res.data.posts;
                     this.photos = res.data.photos;
+                    console.log(this.posts);
                 })
                 .catch((error) => {
                     console.error(error);
