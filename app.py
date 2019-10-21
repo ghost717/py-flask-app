@@ -26,6 +26,7 @@ APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'flask_api2'
+app.config['MYSQL_HOST'] = '127.0.0.1'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 app.config['JWT_SECRET_KEY'] = 'secret'
 
