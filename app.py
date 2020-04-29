@@ -48,7 +48,7 @@ def all_posts():
     today = dt.strftime("%Y-%m-%d %H:%M:%S")
 
     #upload path
-    target = os.path.join(APP_ROOT, 'images/')
+    target = os.path.join(APP_ROOT, 'images')
     if not os.path.isdir(target):
         os.mkdir(target)
     else:
